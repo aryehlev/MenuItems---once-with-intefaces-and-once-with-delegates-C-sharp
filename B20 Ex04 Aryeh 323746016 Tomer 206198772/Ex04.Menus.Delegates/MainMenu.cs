@@ -71,12 +71,17 @@ namespace Ex04.Menus.Delegates
                 MenuItem menuItemPicked = currentMenuBeingShown.SubMenuItems[userInput - 1];
                 if(menuItemPicked.IsFinal)
                 {
+                    Console.Clear();
                     menuItemPicked.OnFinalItemWasChosen();
+                    Console.WriteLine("please press enter to go back to last menu");
+                    Console.ReadLine();
                 }
                 else
                 {
                     currentMenuBeingShown = menuItemPicked;
                 }
+                Console.Clear();
+
             }
         }
         
