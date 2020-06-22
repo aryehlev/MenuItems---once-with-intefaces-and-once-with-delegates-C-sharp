@@ -14,14 +14,14 @@ namespace Ex04.Menus.Delegates
             r_RootMenuItem = m_CurrentMenuItem;
         }
 
-        public bool TryAddMenuItem(string i_Title)
+        public bool TryAddNonExecutableMenuItem(string i_Title)
         {
-            return m_CurrentMenuItem.TryAddMenuItem(i_Title);
+            return m_CurrentMenuItem.TryAddNonExecutableMenuItem(i_Title);
         }
 
-        public bool TryAddMenuItem(string i_Title, Action i_ActionFunc)
+        public bool TryAddExecutableMenuItem(string i_Title, Action i_ActionFunc)
         {
-            return m_CurrentMenuItem.TryAddMenuItem(i_Title, i_ActionFunc);
+            return m_CurrentMenuItem.TryAddExecutableMenuItem(i_Title, i_ActionFunc);
         }
 
         public void TraverseUp()
@@ -69,9 +69,8 @@ namespace Ex04.Menus.Delegates
                 }
 
                 MenuItem menuItemPicked = currentMenuBeingShown.SubMenuItems[userInput - 1];
-                if(menuItemPicked.IsFinal)
+                if(menuItemPicked.IsExecutable)
                 {
-                    Console.Clear();
                     menuItemPicked.OnFinalItemWasChosen();
                     Console.WriteLine("please press enter to go back to last menu");
                     Console.ReadLine();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ex04.Menus.Delegates
 {
@@ -9,7 +8,7 @@ namespace Ex04.Menus.Delegates
         private readonly string r_Title;
         private List<MenuItem> m_SubMenuItems;
         private readonly MenuItem r_ParentMenuItem;
-        private readonly bool r_IsFinal;
+        private readonly bool r_IsExecutable;
         private readonly int r_Level;
 
         public event Action FinalItemWasChosen;
@@ -18,13 +17,13 @@ namespace Ex04.Menus.Delegates
             string i_Title,
             MenuItem i_ParentMenuItem,
             int i_Level,
-            bool i_IsFinal)
+            bool i_IsExecutable)
         {
             r_Title = i_Title;
             m_SubMenuItems = new List<MenuItem>();
             r_ParentMenuItem = i_ParentMenuItem;
             r_Level = i_Level;
-            r_IsFinal = i_IsFinal;
+            r_IsExecutable = i_IsExecutable;
         }
 
         internal string Title
@@ -34,11 +33,11 @@ namespace Ex04.Menus.Delegates
                 return r_Title;
             }
         }
-        internal bool IsFinal
+        internal bool IsExecutable
         {
             get
             {
-                return r_IsFinal;
+                return r_IsExecutable;
             }
         }
 
@@ -66,11 +65,11 @@ namespace Ex04.Menus.Delegates
             }
         }
 
-        internal bool TryAddMenuItem(string i_Title)
+        internal bool TryAddNonExecutableMenuItem(string i_Title)
         {
             bool wasSuccess = false;
             
-            if(!this.r_IsFinal)
+            if(!this.r_IsExecutable)
             {
                 MenuItem menuItemToAdd = new MenuItem(i_Title, this, this.r_Level + 1, false);
                 m_SubMenuItems.Add(menuItemToAdd);
@@ -80,13 +79,13 @@ namespace Ex04.Menus.Delegates
             return wasSuccess;
         }
 
-        internal bool TryAddMenuItem(string i_Title, Action i_ActionFunc)
+        internal bool TryAddExecutableMenuItem(string i_Title, Action i_ActionFunc)
         {
             bool wasSuccess = false;
             
-            if(!this.r_IsFinal)
+            if(!this.r_IsExecutable)
             {
-                MenuItem menuItemToAdd = new MenuItem(i_Title,  this, this.r_Level + 1, true);
+                MenuItem menuItemToAdd = new MenuItem(i_Title, this, this.r_Level + 1, true);
                 m_SubMenuItems.Add(menuItemToAdd);
                 menuItemToAdd.FinalItemWasChosen += i_ActionFunc;
                 wasSuccess = true;
