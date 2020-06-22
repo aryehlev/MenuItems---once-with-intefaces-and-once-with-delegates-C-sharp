@@ -71,7 +71,7 @@ namespace Ex04.Menus.Interfaces
                     MenuItem menuItemPicked = currentMenuBeingShown.SubMenuItems[userInput - 1];
                     if (menuItemPicked.IsExecutable)
                     {
-                        menuItemPicked.OnExecutableItemWasChosen();
+                        menuItemPicked.OnItemWasChosen();
                         Console.WriteLine("please press enter to go back to last menu");
                         Console.ReadLine();
                     }

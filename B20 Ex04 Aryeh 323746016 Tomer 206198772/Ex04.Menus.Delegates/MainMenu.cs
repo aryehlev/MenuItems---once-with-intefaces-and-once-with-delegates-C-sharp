@@ -8,20 +8,35 @@ namespace Ex04.Menus.Delegates
     {
         private MenuItem m_CurrentMenuItem;
         private readonly MenuItem r_RootMenuItem;
+
         public MainMenu(string i_Title)
         {
-            m_CurrentMenuItem = new MenuItem(i_Title,  null, 0, false);
+            m_CurrentMenuItem = new MenuItem(i_Title, null, 0, false);
             r_RootMenuItem = m_CurrentMenuItem;
+
         }
 
-        public bool TryAddNonExecutableMenuItem(string i_Title)
+        public bool TryAddMenuItem(string i_Title, Action i_ActionFunc = null)
         {
-            return m_CurrentMenuItem.TryAddNonExecutableMenuItem(i_Title);
-        }
+            bool wasSuccess = false;
+            bool isExecutable = i_ActionFunc != null;
 
-        public bool TryAddExecutableMenuItem(string i_Title, Action i_ActionFunc)
-        {
-            return m_CurrentMenuItem.TryAddExecutableMenuItem(i_Title, i_ActionFunc);
+            if (!m_CurrentMenuItem.IsExecutable)
+            {
+                MenuItem menuItemToAdd = new MenuItem(i_Title, m_CurrentMenuItem, m_CurrentMenuItem.Level + 1, isExecutable, i_ActionFunc);
+                m_CurrentMenuItem.SubMenuItems.Add(menuItemToAdd);
+                if(isExecutable)
+                {
+                    menuItemToAdd.Chosen += MenuItem_OnChosenExecutable;
+                }
+                else
+                {
+                    menuItemToAdd.Chosen += MenuItem_OnChosenNonExecutable;
+                }
+                wasSuccess = true;
+            }
+
+            return wasSuccess;
         }
 
         public void TraverseUp()
@@ -31,6 +46,7 @@ namespace Ex04.Menus.Delegates
             {
                 throw new InvalidOperationException("Root MenuItem is God");
             }
+
             m_CurrentMenuItem = parentMenuItem;
         }
 
@@ -47,43 +63,46 @@ namespace Ex04.Menus.Delegates
                 e.Data.Add("UserMessage", "This Is a leaf MenuItem with no children");
                 throw;
             }
-           
+
         }
 
         public void Show()
         {
-            MenuItem currentMenuBeingShown = r_RootMenuItem;
+            m_CurrentMenuItem = r_RootMenuItem;
             while(true)
             {
-                Console.WriteLine(buildMenu(currentMenuBeingShown));
-                int userInput = getValidInputFromUser(currentMenuBeingShown);
-                if (userInput == 0)
+                Console.WriteLine(buildMenu(m_CurrentMenuItem));
+                int userInput = getValidInputFromUser(m_CurrentMenuItem);
+                if(userInput == 0)
                 {
-                    if (currentMenuBeingShown.Level == 0)
+                    if(m_CurrentMenuItem.Level == 0)
                     {
                         Console.Out.WriteLine("BYEEEEEEEEEEEE");
                         break;
                     }
-                    currentMenuBeingShown = currentMenuBeingShown.ParentMenuItem;
+
+                    m_CurrentMenuItem = m_CurrentMenuItem.ParentMenuItem;
                     continue;
                 }
 
-                MenuItem menuItemPicked = currentMenuBeingShown.SubMenuItems[userInput - 1];
-                if(menuItemPicked.IsExecutable)
-                {
-                    menuItemPicked.OnFinalItemWasChosen();
-                    Console.WriteLine("please press enter to go back to last menu");
-                    Console.ReadLine();
-                }
-                else
-                {
-                    currentMenuBeingShown = menuItemPicked;
-                }
-                Console.Clear();
+                MenuItem menuItemPicked = m_CurrentMenuItem.SubMenuItems[userInput - 1];
+                menuItemPicked.OnChosen();
 
+                Console.Clear();
             }
         }
-        
+
+        private void MenuItem_OnChosenExecutable(MenuItem menuItemPicked)
+        {
+            menuItemPicked.OnExecute();
+        }
+
+        private void MenuItem_OnChosenNonExecutable(MenuItem menuItemPicked)
+        {
+            m_CurrentMenuItem = menuItemPicked;
+        }
+
+
         private string buildMenu(MenuItem i_MenuItemToShow)
         {
             StringBuilder menu = new StringBuilder();
@@ -105,7 +124,8 @@ namespace Ex04.Menus.Delegates
         {
             string input = Console.ReadLine();
             int menuItemIdx = 0;
-            while(!int.TryParse(input, out menuItemIdx) || menuItemIdx < 0 || menuItemIdx > i_CurrentMenuBeingShown.SubMenuItems.Count)
+            while(!int.TryParse(input, out menuItemIdx) || menuItemIdx < 0
+                                                        || menuItemIdx > i_CurrentMenuBeingShown.SubMenuItems.Count)
             {
                 Console.Out.WriteLine("Your input was not a valid menu index, please try again.");
                 input = Console.ReadLine();
@@ -113,5 +133,6 @@ namespace Ex04.Menus.Delegates
 
             return menuItemIdx;
         }
+        
     }
 }

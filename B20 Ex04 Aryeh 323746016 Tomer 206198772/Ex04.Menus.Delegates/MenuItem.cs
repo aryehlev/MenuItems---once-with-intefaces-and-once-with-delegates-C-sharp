@@ -11,19 +11,22 @@ namespace Ex04.Menus.Delegates
         private readonly bool r_IsExecutable;
         private readonly int r_Level;
 
-        public event Action FinalItemWasChosen;
+        public event Action<MenuItem> Chosen;
 
+        public event Action Execute; 
         internal MenuItem(
             string i_Title,
             MenuItem i_ParentMenuItem,
             int i_Level,
-            bool i_IsExecutable)
+            bool i_IsExecutable,
+            Action i_ActionFunc = null)
         {
             r_Title = i_Title;
             m_SubMenuItems = new List<MenuItem>();
             r_ParentMenuItem = i_ParentMenuItem;
             r_Level = i_Level;
             r_IsExecutable = i_IsExecutable;
+            Execute = i_ActionFunc;
         }
 
         internal string Title
@@ -64,39 +67,17 @@ namespace Ex04.Menus.Delegates
                 return m_SubMenuItems;
             }
         }
-
-        internal bool TryAddNonExecutableMenuItem(string i_Title)
+        
+        internal void OnChosen()
         {
-            bool wasSuccess = false;
-            
-            if(!this.r_IsExecutable)
-            {
-                MenuItem menuItemToAdd = new MenuItem(i_Title, this, this.r_Level + 1, false);
-                m_SubMenuItems.Add(menuItemToAdd);
-                wasSuccess = true;
-            }
-
-            return wasSuccess;
+            Chosen?.Invoke(this);
         }
 
-        internal bool TryAddExecutableMenuItem(string i_Title, Action i_ActionFunc)
+        internal void OnExecute()
         {
-            bool wasSuccess = false;
-            
-            if(!this.r_IsExecutable)
-            {
-                MenuItem menuItemToAdd = new MenuItem(i_Title, this, this.r_Level + 1, true);
-                m_SubMenuItems.Add(menuItemToAdd);
-                menuItemToAdd.FinalItemWasChosen += i_ActionFunc;
-                wasSuccess = true;
-            }
-
-            return wasSuccess;
-        }
-
-        internal void OnFinalItemWasChosen()
-        {
-            FinalItemWasChosen?.Invoke();
+            Execute?.Invoke();
+            Console.WriteLine("please press enter to go back to last menu");
+            Console.ReadLine();
         }
     }
 }

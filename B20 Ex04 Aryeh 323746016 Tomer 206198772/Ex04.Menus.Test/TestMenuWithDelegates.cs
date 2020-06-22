@@ -5,7 +5,7 @@ namespace Ex04.Menus.Test
 {
     class TestMenuWithDelegates
     {
-        public static void ShowTest()
+        public static void ActivateTest()
         {
             MainMenu mainMenu = new MainMenu("Menu With Delegates");
             mainMenu.TryAddMenuItem("Version and Capitals");

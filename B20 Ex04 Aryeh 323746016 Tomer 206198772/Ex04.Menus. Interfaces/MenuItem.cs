@@ -93,7 +93,7 @@ namespace Ex04.Menus.Interfaces
                 return wasSuccess;
             }
 
-            internal void OnExecutableItemWasChosen()
+            internal void OnItemWasChosen()
             {
                 m_Executable?.FunctionToExecute();
             }
