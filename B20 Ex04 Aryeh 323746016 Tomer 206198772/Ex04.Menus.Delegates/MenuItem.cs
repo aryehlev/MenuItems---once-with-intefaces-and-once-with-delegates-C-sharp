@@ -30,14 +30,14 @@ namespace Ex04.Menus.Delegates
             r_IsFinal = i_IsFinal;
         }
 
-        public string Title
+        internal string Title
         {
             get
             {
                 return r_Title;
             }
         }
-        public bool IsFinal
+        internal bool IsFinal
         {
             get
             {
@@ -45,7 +45,7 @@ namespace Ex04.Menus.Delegates
             }
         }
 
-        public MenuItem ParentMenuItem
+        internal MenuItem ParentMenuItem
         {
             get
             {
@@ -63,7 +63,7 @@ namespace Ex04.Menus.Delegates
 
 
 
-        public List<MenuItem> SubMenuItems
+        internal List<MenuItem> SubMenuItems
         {
             get
             {
