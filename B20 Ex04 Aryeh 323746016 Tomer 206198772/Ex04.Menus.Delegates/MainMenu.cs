@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Ex04.Menus.Delegates
 {
@@ -18,51 +20,59 @@ namespace Ex04.Menus.Delegates
             MenuItem currentMenuBeingShown = RootOfMenus;
             while(true)
             {
-                buildMenu(currentMenuBeingShown);
-                if(checkIfGoodInput(out string inputFromUser))
+                Console.WriteLine(buildMenu(currentMenuBeingShown));
+                int userInput = getValidInputFromUser(currentMenuBeingShown);
+                if (userInput == 0)
                 {
-                    MenuItem menuItemPicked = getSubMenuFromUsr(currentMenuBeingShown, inputFromUser, out bool wantsToGoBack);
-                    if(wantsToGoBack)
+                    if (currentMenuBeingShown.Level == 0)
                     {
-                        if(currentMenuBeingShown == RootOfMenus)
-                        {
-                            //print goodbye
-                            break;
-                        }
-                        else
-                        {
-                            currentMenuBeingShown = currentMenuBeingShown.FatherItem;
-                            continue;
-                        }
+                        Console.Out.WriteLine("BYEEEEEEEEEEEE");
+                        break;
                     }
+                    currentMenuBeingShown = currentMenuBeingShown.FatherItem;
+                    continue;
+                }
 
-                    if(menuItemPicked.IsFinal)
-                    {
-                        ///do action
-                    }
-                    else
-                    {
-                        currentMenuBeingShown = menuItemPicked;
-                    }
+                MenuItem menuItemPicked = currentMenuBeingShown.SubMenuItems[userInput - 1];
+                if(menuItemPicked.IsFinal)
+                {
+                    menuItemPicked.OnFinalItemWasChosen();
+                }
+                else
+                {
+                    currentMenuBeingShown = menuItemPicked;
                 }
             }
         }
         
-        private void buildMenu(MenuItem i_MenuItemToShow)
+        private string buildMenu(MenuItem i_MenuItemToShow)
         {
+            StringBuilder menu = new StringBuilder();
+            menu.Append($"{i_MenuItemToShow.Title}: {i_MenuItemToShow.Level}\n");
+            List<MenuItem> subMenuItems = i_MenuItemToShow.SubMenuItems;
+            int optionNumber = 1;
+            foreach(MenuItem menuItem in subMenuItems)
+            {
+                menu.Append($"{optionNumber} - {menuItem.Title}\n");
+                optionNumber++;
+            }
 
+            string lastOption = i_MenuItemToShow.Level == 0 ? "Exit" : "Back";
+            menu.Append($"0 - {lastOption}\n");
+            return menu.ToString();
         }
 
-        private MenuItem getSubMenuFromUsr(MenuItem i_CurrentMenuItem, string i_NumOfSubMenuFromUser, out bool i_WantsToGoBack)
+        private int getValidInputFromUser(MenuItem i_CurrentMenuBeingShown)
         {
-            i_WantsToGoBack = false;
-            return null;
-        }
+            string input = Console.ReadLine();
+            int menuItemIdx = 0;
+            while(!int.TryParse(input, out menuItemIdx) || menuItemIdx < 0 || menuItemIdx > i_CurrentMenuBeingShown.SubMenuItems.Count)
+            {
+                Console.Out.WriteLine("Your input was not a valid menu index, please try again.");
+                input = Console.ReadLine();
+            }
 
-        private bool checkIfGoodInput(out string o_ErrorMsg)
-        {
-            o_ErrorMsg = "";
-            return true;
+            return menuItemIdx;
         }
     }
 }
