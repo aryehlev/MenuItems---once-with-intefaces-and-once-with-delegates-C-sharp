@@ -6,18 +6,52 @@ namespace Ex04.Menus.Delegates
 {
     class MainMenu
     {
-        private MenuItem m_RootOfMenus;
-
+        private MenuItem m_CurrentMenuItem;
+        private MenuItem m_RootMenuItem;
         public MainMenu(string i_Title)
         {
-            m_RootOfMenus = new MenuItem(i_Title, null, null, 0, false);
+            m_CurrentMenuItem = new MenuItem(i_Title, null, null, 0, false);
+            m_RootMenuItem = m_CurrentMenuItem;
         }
 
-        public MenuItem RootOfMenus { get;}
+        public bool TryAddMenuItem(string i_Title)
+        {
+            return m_CurrentMenuItem.TryAddMenuItem(i_Title);
+        }
 
+        public bool TryAddMenuItem(string i_Title, Action i_ActionFunc)
+        {
+            return m_CurrentMenuItem.TryAddMenuItem(i_Title, i_ActionFunc);
+        }
+
+        public void TraverseUp()
+        {
+            MenuItem parentMenuItem = m_CurrentMenuItem.ParentMenuItem;
+            if(parentMenuItem == null)
+            {
+                throw new InvalidOperationException("Root MenuItem is God");
+            }
+            m_CurrentMenuItem = parentMenuItem;
+        }
+
+        public void TraverseDown(int i_MenuItemIdx)
+        {
+
+            try
+            {
+                MenuItem childMenuItem = m_CurrentMenuItem.SubMenuItems[i_MenuItemIdx];
+                m_CurrentMenuItem = childMenuItem;
+            }
+            catch(IndexOutOfRangeException e)
+            {
+                e.Data.Add("UserMessage", "This Is a leaf MenuItem with no children");
+                throw;
+            }
+           
+        }
         public void Show()
         {
-            MenuItem currentMenuBeingShown = RootOfMenus;
+            MenuItem currentMenuBeingShown = m_RootMenuItem;
             while(true)
             {
                 Console.WriteLine(buildMenu(currentMenuBeingShown));
@@ -29,7 +63,7 @@ namespace Ex04.Menus.Delegates
                         Console.Out.WriteLine("BYEEEEEEEEEEEE");
                         break;
                     }
-                    currentMenuBeingShown = currentMenuBeingShown.FatherItem;
+                    currentMenuBeingShown = currentMenuBeingShown.ParentMenuItem;
                     continue;
                 }
 
