@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Ex04.Menus.Delegates
 {
-    class MainMenu
+    public class MainMenu
     {
         private MenuItem m_CurrentMenuItem;
-        private MenuItem m_RootMenuItem;
+        private readonly MenuItem r_RootMenuItem;
         public MainMenu(string i_Title)
         {
-            m_CurrentMenuItem = new MenuItem(i_Title, null, null, 0, false);
-            m_RootMenuItem = m_CurrentMenuItem;
+            m_CurrentMenuItem = new MenuItem(i_Title,  null, 0, false);
+            r_RootMenuItem = m_CurrentMenuItem;
         }
 
         public bool TryAddMenuItem(string i_Title)
@@ -49,9 +49,10 @@ namespace Ex04.Menus.Delegates
             }
            
         }
+
         public void Show()
         {
-            MenuItem currentMenuBeingShown = m_RootMenuItem;
+            MenuItem currentMenuBeingShown = r_RootMenuItem;
             while(true)
             {
                 Console.WriteLine(buildMenu(currentMenuBeingShown));

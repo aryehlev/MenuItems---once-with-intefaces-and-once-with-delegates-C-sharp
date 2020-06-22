@@ -14,17 +14,14 @@ namespace Ex04.Menus.Delegates
 
         public event Action FinalItemWasChosen;
 
-        
-
         internal MenuItem(
             string i_Title,
-            List<MenuItem> i_SubMenuItems,
             MenuItem i_ParentMenuItem,
             int i_Level,
             bool i_IsFinal)
         {
             r_Title = i_Title;
-            m_SubMenuItems = i_SubMenuItems;
+            m_SubMenuItems = new List<MenuItem>();
             r_ParentMenuItem = i_ParentMenuItem;
             r_Level = i_Level;
             r_IsFinal = i_IsFinal;
@@ -60,9 +57,7 @@ namespace Ex04.Menus.Delegates
                 return r_Level;
             }
         }
-
-
-
+        
         internal List<MenuItem> SubMenuItems
         {
             get
@@ -77,7 +72,7 @@ namespace Ex04.Menus.Delegates
             
             if(!this.r_IsFinal)
             {
-                MenuItem menuItemToAdd = new MenuItem(i_Title, null, this, this.r_Level + 1, false);
+                MenuItem menuItemToAdd = new MenuItem(i_Title, this, this.r_Level + 1, false);
                 m_SubMenuItems.Add(menuItemToAdd);
                 wasSuccess = true;
             }
@@ -91,7 +86,7 @@ namespace Ex04.Menus.Delegates
             
             if(!this.r_IsFinal)
             {
-                MenuItem menuItemToAdd = new MenuItem(i_Title, null, this, this.r_Level + 1, true);
+                MenuItem menuItemToAdd = new MenuItem(i_Title,  this, this.r_Level + 1, true);
                 m_SubMenuItems.Add(menuItemToAdd);
                 menuItemToAdd.FinalItemWasChosen += i_ActionFunc;
                 wasSuccess = true;
